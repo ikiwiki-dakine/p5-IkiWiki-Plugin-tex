@@ -88,6 +88,10 @@ sub htmlize (@)
     };
 
     my $texname='tex4iki';
+    my $pagedir= $config{srcdir} . '/' . dirname ($pagesources{$page});
+    my $destdir = File::Spec->rel2abs($config{destdir});
+    $pagedir = File::Spec->rel2abs( $pagedir );
+
     if (! $@ &&
 	# `htlatex' can't work directly on stdin.
 	writefile ("$texname.tex", $tmp, $params{content}) == 0)
@@ -98,11 +102,9 @@ sub htmlize (@)
     chdir $tmp || die "$!";
 
     # so includes from same directory work
-
-
-    my $pagedir= $config{srcdir} . '/' . dirname ($pagesources{$page});
     $ENV{TEXINPUTS}= $pagedir.':'.$ENV{TEXINPUTS};
     $ENV{TEX4HTINPUTS}= $pagedir.':'.$ENV{TEXINPUTS};
+    $ENV{BIBINPUTS}= $pagedir.':'.$ENV{BIBINPUTS};
     
     if (defined $config{texoverrides}){
 	$ENV{TEXINPUTS}= $config{texoverrides}.':'.$ENV{TEXINPUTS};
@@ -110,20 +112,24 @@ sub htmlize (@)
     }
     debug("TEXINPUTS=".$ENV{TEXINPUTS});
     debug("calling htlatex for ".$params{page});
-    system('htlatex',$texname.'.tex');
+    #system(qw(latexmk -dvi),$texname);
+    #system(qw(mk4ht htlatex),$texname);
+    system(qw(htlatex),$texname);
+    system(qw(bibtex), $texname);
+    system(qw(htlatex),$texname);
 
     foreach my $png (<*.png>){
 	my $destpng=$page."/".$png;
 	will_render($params{page},$destpng);
 	my $data=readfile($png,1);
-	writefile($png,$config{destdir}."/".$page,$data,1) || die "$!";
+	writefile($png,$destdir."/".$page,$data,1) || die "$!";
     }
 
     my $stylesheet=$page."/tex4ht.css";
     will_render($params{page},$stylesheet);
 
     my $css=readfile("$texname.css");
-    writefile("tex4ht.css",$config{destdir}."/".$params{page},$css) || die "$!";
+    writefile("tex4ht.css",$destdir."/".$params{page},$css) || die "$!";
 
 
     push @{$metaheaders{$page}}, '<link href="'.urlto($stylesheet, $page).
