@@ -2,7 +2,7 @@
 # Latexml and latex plugin
 # based on the WikiText plugin.
 # Written by Josef Urban, modified by Joe Corneli
-package IkiWiki::Plugin::tex;
+package IkiWiki::Plugin::latexml;
 
 use warnings;
 use strict;
