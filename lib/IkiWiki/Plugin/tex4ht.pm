@@ -20,7 +20,6 @@
 
 
 
-
 package IkiWiki::Plugin::tex4ht;
 use Data::Dumper;
 use warnings;
@@ -28,7 +27,7 @@ use strict;
 use IkiWiki 2.00;
 use File::Basename;
 use Cwd;
-
+
 my %metaheaders;
 
 # From `Ikiwiki/Plugins/teximg.pm'.
@@ -42,7 +41,7 @@ sub create_tmp_dir ($)
     my $tmpdir = tempdir ($template, TMPDIR => 1, CLEANUP => 1);
     return $tmpdir;
 }
-
+
 sub import
 {
     hook (type => "filter", id=>"tex",call=>\&filter);
@@ -163,5 +162,5 @@ sub pagetemplate (@) { #{{{
 		$template->param(meta => join("\n", grep { (! $seen{$_}) && ($seen{$_}=1) } @{$metaheaders{$page}}));
 	}
 }
-
+
 1
