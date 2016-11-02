@@ -25,7 +25,6 @@ use Data::Dumper;
 use warnings;
 use strict;
 use IkiWiki 2.00;
-use File::Which;
 use File::Basename;
 use Cwd;
 
@@ -115,7 +114,9 @@ sub htmlize (@)
     #system(qw(latexmk -dvi),$texname);
     #system(qw(mk4ht htlatex),$texname);
     system(qw(htlatex),$texname);
-    if( which('biber') ) { # note: this would be better if it was based on latexmk
+    my $logfile = readfile("$texname.log") ;
+    my $need_biber = $logfile =~ /\QPackage biblatex Warning: Please (re)run Biber on the file\E/m;
+    if( $need_biber ) { # note: this would be better if it was based on latexmk
       system(qw(biber), $texname);
     } else {
       system(qw(bibtex), $texname);
@@ -145,6 +146,13 @@ sub htmlize (@)
 
     my $ret = <IN>;
     close IN;
+
+    # fix links back to same page
+    # e.g.,
+    #   <a href="tex4iki.html#anchor">
+    # to
+    #   <a href="#anchor">
+    $ret =~ s/(<a\s+href=")tex4iki.html/$1/sg;
 
     # Cut out the interesting bits.
     $ret =~ s/.*<\/head>//s;
