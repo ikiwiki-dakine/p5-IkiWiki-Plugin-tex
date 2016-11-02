@@ -25,6 +25,7 @@ use Data::Dumper;
 use warnings;
 use strict;
 use IkiWiki 2.00;
+use File::Which;
 use File::Basename;
 use Cwd;
 
@@ -114,7 +115,11 @@ sub htmlize (@)
     #system(qw(latexmk -dvi),$texname);
     #system(qw(mk4ht htlatex),$texname);
     system(qw(htlatex),$texname);
-    system(qw(bibtex), $texname);
+    if( which('biber') ) { # note: this would be better if it was based on latexmk
+      system(qw(biber), $texname);
+    } else {
+      system(qw(bibtex), $texname);
+    }
     system(qw(htlatex),$texname);
 
     foreach my $png (<*.png>){
