@@ -24,6 +24,7 @@ package IkiWiki::Plugin::tex4ht;
 use Data::Dumper;
 use warnings;
 use strict;
+use Encode;
 use IkiWiki 2.00;
 use File::Basename;
 use Cwd;
@@ -150,6 +151,8 @@ sub htmlize (@)
 
     my $ret = <IN>;
     close IN;
+
+    $ret = decode_utf8($ret);
 
     # fix links back to same page
     # e.g.,
