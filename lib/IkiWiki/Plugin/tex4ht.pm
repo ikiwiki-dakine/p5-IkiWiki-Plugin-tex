@@ -112,7 +112,7 @@ sub htmlize (@)
     }
 
     # Add support for Unicode input
-    my @htlatex_args = ("xhtml, charset=utf-8", "-cunihtf -utf8");
+    my @htlatex_args = ("xhtml, mathml, charset=utf-8", " -cunihtf -utf8");
 
     debug("TEXINPUTS=".$ENV{TEXINPUTS});
     debug("calling htlatex for ".$params{page});
@@ -146,13 +146,11 @@ sub htmlize (@)
 	'" rel="stylesheet"'.
 	' type="text/css" />';
 
-    open(IN,"$texname.html") || die "$!";
+    open(IN, '<:encoding(UTF-8)', "$texname.html") || die "$!";
     local $/ = undef;
 
     my $ret = <IN>;
     close IN;
-
-    $ret = decode_utf8($ret);
 
     # fix links back to same page
     # e.g.,
