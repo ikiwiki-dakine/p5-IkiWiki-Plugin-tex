@@ -109,11 +109,15 @@ sub htmlize (@)
 	$ENV{TEXINPUTS}= $config{texoverrides}.':'.$ENV{TEXINPUTS};
 	$ENV{TEX4HTINPUTS}= $config{texoverrides}.':'.$ENV{TEX4HTINPUTS};
     }
+
+    # Add support for Unicode input
+    my @htlatex_args = ("xhtml, charset=utf-8", "-cunihtf -utf8");
+
     debug("TEXINPUTS=".$ENV{TEXINPUTS});
     debug("calling htlatex for ".$params{page});
     #system(qw(latexmk -dvi),$texname);
     #system(qw(mk4ht htlatex),$texname);
-    system(qw(htlatex),$texname);
+    system(qw(htlatex),$texname,@htlatex_args);
     my $logfile = readfile("$texname.log") ;
     my $need_biber = $logfile =~ /\QPackage biblatex Warning: Please (re)run Biber on the file\E/m;
     if( $need_biber ) { # note: this would be better if it was based on latexmk
@@ -121,7 +125,7 @@ sub htmlize (@)
     } else {
       system(qw(bibtex), $texname);
     }
-    system(qw(htlatex),$texname);
+    system(qw(htlatex),$texname,@htlatex_args);
 
     foreach my $png (<*.png>){
 	my $destpng=$page."/".$png;
