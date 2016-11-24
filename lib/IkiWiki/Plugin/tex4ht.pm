@@ -128,11 +128,11 @@ sub htmlize (@)
     }
     system(qw(htlatex),$texname,@htlatex_args);
 
-    foreach my $png (<*.png>){
-	my $destpng=$page."/".$png;
-	will_render($params{page},$destpng);
-	my $data=readfile($png,1);
-	writefile($png,$destdir."/".$page,$data,1) || die "$!";
+    foreach my $img (<*.png>, <*.svg>){
+	my $destimg=$page."/".$img;
+	will_render($params{page},$destimg);
+	my $data=readfile($img,1);
+	writefile($img,$destdir."/".$page,$data,1) || die "$!";
     }
 
     my $stylesheet=$page."/tex4ht.css";
