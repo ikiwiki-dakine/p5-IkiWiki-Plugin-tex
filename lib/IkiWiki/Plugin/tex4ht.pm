@@ -119,6 +119,7 @@ sub htmlize (@)
     debug("calling htlatex for ".$params{page});
     #system(qw(latexmk -dvi),$texname);
     #system(qw(mk4ht htlatex),$texname);
+    system(qw(pdflatex),qw(-shell-escape),$texname);
     system(qw(htlatex),$texname,@htlatex_args);
     my $logfile = readfile("$texname.log") ;
     my $need_biber = $logfile =~ /\QPackage biblatex Warning: Please (re)run Biber on the file\E/m;
