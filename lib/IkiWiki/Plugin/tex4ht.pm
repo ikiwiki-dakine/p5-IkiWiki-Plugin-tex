@@ -105,6 +105,7 @@ sub htmlize (@)
     $ENV{TEXINPUTS}= $pagedir.':'.$ENV{TEXINPUTS};
     $ENV{TEX4HTINPUTS}= $pagedir.':'.$ENV{TEXINPUTS};
     $ENV{BIBINPUTS}= $pagedir.':'.$ENV{BIBINPUTS};
+    $ENV{BSTINPUTS}= $pagedir.':'.$ENV{BSTINPUTS};
     
     if (defined $config{texoverrides}){
 	$ENV{TEXINPUTS}= $config{texoverrides}.':'.$ENV{TEXINPUTS};
